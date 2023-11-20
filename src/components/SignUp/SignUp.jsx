@@ -8,6 +8,7 @@ import { UserActions } from "../../store/UserSlice";
 import { LOCAL_STORAGE_NAME } from "../../common/constants";
 import { addUser } from "../../store/UserSlice";
 import { fetchUsers } from "../../store/UserSlice";
+import { usersList } from "../../store/selectors";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("This field is required"),
@@ -26,7 +27,7 @@ const validationSchema = Yup.object().shape({
 const SignUp = ({ setVisibility }) => {
   const dispatch = useDispatch();
   const [alertMessage, setAlertMessage] = useState("");
-  const users = useSelector((state) => state.user.users);
+  const users = useSelector(usersList);
   const tempEmail = localStorage.getItem(LOCAL_STORAGE_NAME.TEMP_EMAIL);
 
   useEffect(() => {

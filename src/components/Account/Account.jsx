@@ -23,14 +23,16 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { EventActions } from "../../store/EventSlice";
 import { fetchUsers } from "../../store/UserSlice";
 import InviteForm from "../InviteForm/InviteForm";
+import { usersList, eventsList, currentUser } from "../../store/selectors";
 
 const Account = () => {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user.user);
-  const events = useSelector((state) => state.events.events);
+  const users = useSelector(usersList);
+  const user = useSelector(currentUser);
+  const events = useSelector(eventsList);
+
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
-  const users = useSelector((state) => state.user.users);
 
   const handleOpenModal = () => {
     setOpenModal(true);

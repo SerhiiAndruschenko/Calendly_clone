@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { EventActions } from "../../store/EventSlice";
-//import { UserActions } from '../../store/UserSlice';
+import { usersList } from "../../store/selectors";
 import { fetchUsers } from "../../store/UserSlice";
 
 const validationSchema = Yup.object({
@@ -29,7 +29,7 @@ const validationSchema = Yup.object({
 });
 
 const CreateEventForm = ({ onCloseModal }) => {
-  const users = useSelector((state) => state.user.users);
+  const users = useSelector(usersList);
   const dispatch = useDispatch();
 
   useEffect(() => {

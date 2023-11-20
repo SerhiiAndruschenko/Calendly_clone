@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { UserActions } from "../../store/UserSlice";
 import { LOCAL_STORAGE_NAME } from "../../common/constants";
 import { fetchUsers } from "../../store/UserSlice";
+import { usersList } from "../../store/selectors";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
@@ -20,7 +21,7 @@ const SignIn = ({ setVisibility }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [alertMessage, setAlertMessage] = useState("");
-  const users = useSelector((state) => state.user.users);
+  const users = useSelector(usersList);
 
   useEffect(() => {
     dispatch(fetchUsers());
