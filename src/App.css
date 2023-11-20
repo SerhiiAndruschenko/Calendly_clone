@@ -1,0 +1,66 @@
+.App {
+  margin: 50px 0;
+  
+}
+body {
+  background-color:#ddd;
+}
+h2 {
+  text-align: center;
+}
+form>div{
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+}
+form>div:last-child{
+  margin: 0;
+}
+
+.user-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap:20px;
+}
+
+.MuiToolbar-root {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.MuiToolbar-root button{
+  padding: 0;
+  color:#fff;
+}
+
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  background-color: #fff;
+  padding: 30px 20px;
+}
+.modal>button {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.MuiList-root {
+  margin: 50px 0;
+  width: 100%;
+}
+.MuiList-root li{
+  margin-bottom: 5px;
+  background-color:#fff;
+}
+.user-inner .MuiList-root {
+  margin: 50px 0;
+  width: 95%;
+  padding-left: 24px!important;
+  padding-right: 24px!important;
+}
