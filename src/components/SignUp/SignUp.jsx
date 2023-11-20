@@ -1,32 +1,31 @@
-import { useState, useEffect } from 'react';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import Paper from '@mui/material/Paper';
-import { Alert, TextField, Button } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
-import { UserActions } from '../../store/UserSlice';
-import { LOCAL_STORAGE_NAME } from '../../common/constants';
-import { addUser } from '../../store/UserSlice';
-import { fetchUsers } from '../../store/UserSlice';
+import { useState, useEffect } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import Paper from "@mui/material/Paper";
+import { Alert, TextField, Button } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { UserActions } from "../../store/UserSlice";
+import { LOCAL_STORAGE_NAME } from "../../common/constants";
+import { addUser } from "../../store/UserSlice";
+import { fetchUsers } from "../../store/UserSlice";
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string()
-    .required('This field is required'),
+  name: Yup.string().required("This field is required"),
   email: Yup.string()
-    .email('Email is not valid')
-    .required('This field is required'),
+    .email("Email is not valid")
+    .required("This field is required"),
   password: Yup.string()
-    .required('This field is required')
-    .min(8, 'Password must be at least 8 characters')
+    .required("This field is required")
+    .min(8, "Password must be at least 8 characters")
     .matches(
       /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[0-9])(?=.*[a-z]).{8,}$/,
-      'Password must contain at least 1 uppercase letter, 1 special character, and 1 number'
+      "Password must contain at least 1 uppercase letter, 1 special character, and 1 number"
     ),
 });
 
-const SignUp = ( { setVisibility } ) => {
+const SignUp = ({ setVisibility }) => {
   const dispatch = useDispatch();
-  const [alertMessage, setAlertMessage] = useState('');
+  const [alertMessage, setAlertMessage] = useState("");
   const users = useSelector((state) => state.user.users);
   const tempEmail = localStorage.getItem(LOCAL_STORAGE_NAME.TEMP_EMAIL);
 
@@ -35,11 +34,11 @@ const SignUp = ( { setVisibility } ) => {
   }, [dispatch]);
 
   const formik = useFormik({
-    initialValues:{
-      name: '',
-      email: tempEmail || '',
-      password: '',
-    }, 
+    initialValues: {
+      name: "",
+      email: tempEmail || "",
+      password: "",
+    },
     validationSchema: validationSchema,
     onSubmit: () => {
       const { name, email, password } = formik.values;
@@ -49,8 +48,8 @@ const SignUp = ( { setVisibility } ) => {
         email,
         password,
       };
-      
-      const foundUser = users.find(user => user.email === email);
+
+      const foundUser = users.find((user) => user.email === email);
 
       if (!foundUser) {
         dispatch(addUser(newUser));
@@ -58,15 +57,22 @@ const SignUp = ( { setVisibility } ) => {
         dispatch(UserActions.logIn({ ...newUser }));
         localStorage.removeItem(LOCAL_STORAGE_NAME.TEMP_EMAIL);
       } else {
-        setAlertMessage('User already exist. Please sign in.')
+        setAlertMessage("User already exist. Please sign in.");
       }
-      
-    }
-  })
+    },
+  });
 
-  return(
+  return (
     <>
-      <Paper sx={{ maxWidth: 350, marginLeft: 'auto', marginRight: 'auto', padding: '20px'}} elevation={3}>
+      <Paper
+        sx={{
+          maxWidth: 350,
+          marginLeft: "auto",
+          marginRight: "auto",
+          padding: "20px",
+        }}
+        elevation={3}
+      >
         <form onSubmit={formik.handleSubmit}>
           <h2>Sign Up</h2>
 
@@ -115,17 +121,17 @@ const SignUp = ( { setVisibility } ) => {
             />
           </div>
 
-          { alertMessage && (
+          {alertMessage && (
             <>
               <Alert severity="error">{alertMessage}</Alert>
             </>
           )}
 
           <div>
-            <Button 
+            <Button
               fullWidth
-              variant="contained" 
-              color="primary" 
+              variant="contained"
+              color="primary"
               type="submit"
               size="large"
             >
@@ -134,13 +140,14 @@ const SignUp = ( { setVisibility } ) => {
           </div>
 
           <div>
-           <Button variant="text" onClick={setVisibility}>Sign In</Button>
+            <Button variant="text" onClick={setVisibility}>
+              Sign In
+            </Button>
           </div>
-
         </form>
       </Paper>
     </>
-  )
-}
+  );
+};
 
 export default SignUp;

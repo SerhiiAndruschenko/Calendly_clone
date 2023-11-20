@@ -1,22 +1,34 @@
-import { useEffect } from 'react';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { TextField, Button, MenuItem, Container, FormControl, InputLabel, Select, Grid, Box } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
-import { EventActions } from '../../store/EventSlice';
+import { useEffect } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import {
+  TextField,
+  Button,
+  MenuItem,
+  Container,
+  FormControl,
+  InputLabel,
+  Select,
+  Grid,
+  Box,
+} from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { EventActions } from "../../store/EventSlice";
 //import { UserActions } from '../../store/UserSlice';
-import { fetchUsers } from '../../store/UserSlice';
+import { fetchUsers } from "../../store/UserSlice";
 
 const validationSchema = Yup.object({
-  eventName: Yup.string().required('This field is required').min(3, 'Minimum 3 characters'),
-  description: Yup.string().required('This field is required').min(10, 'Minimum 10 characters'),
-  selectedUser: Yup.string().required('This field is required'),
-  dateTime: Yup.date().required('This field is required'),
+  eventName: Yup.string()
+    .required("This field is required")
+    .min(3, "Minimum 3 characters"),
+  description: Yup.string()
+    .required("This field is required")
+    .min(10, "Minimum 10 characters"),
+  selectedUser: Yup.string().required("This field is required"),
+  dateTime: Yup.date().required("This field is required"),
 });
 
-
-
-const CreateEventForm = ( { onCloseModal } ) => {
+const CreateEventForm = ({ onCloseModal }) => {
   const users = useSelector((state) => state.user.users);
   const dispatch = useDispatch();
 
@@ -27,9 +39,9 @@ const CreateEventForm = ( { onCloseModal } ) => {
 
   const formik = useFormik({
     initialValues: {
-      eventName: '',
-      description: '',
-      selectedUser: '',
+      eventName: "",
+      description: "",
+      selectedUser: "",
       dateTime: new Date(),
     },
     validationSchema,
@@ -51,7 +63,9 @@ const CreateEventForm = ( { onCloseModal } ) => {
               label="Event Name"
               value={formik.values.eventName}
               onChange={formik.handleChange}
-              error={formik.touched.eventName && Boolean(formik.errors.eventName)}
+              error={
+                formik.touched.eventName && Boolean(formik.errors.eventName)
+              }
               helperText={formik.touched.eventName && formik.errors.eventName}
             />
           </Grid>
@@ -65,8 +79,12 @@ const CreateEventForm = ( { onCloseModal } ) => {
               rows={4}
               value={formik.values.description}
               onChange={formik.handleChange}
-              error={formik.touched.description && Boolean(formik.errors.description)}
-              helperText={formik.touched.description && formik.errors.description}
+              error={
+                formik.touched.description && Boolean(formik.errors.description)
+              }
+              helperText={
+                formik.touched.description && formik.errors.description
+              }
             />
           </Grid>
           <Grid item xs={12}>
@@ -79,7 +97,10 @@ const CreateEventForm = ( { onCloseModal } ) => {
                 label="Select User"
                 value={formik.values.selectedUser}
                 onChange={formik.handleChange}
-                error={formik.touched.selectedUser && Boolean(formik.errors.selectedUser)}
+                error={
+                  formik.touched.selectedUser &&
+                  Boolean(formik.errors.selectedUser)
+                }
               >
                 {users.map((user) => (
                   <MenuItem key={user.id} value={user.name}>

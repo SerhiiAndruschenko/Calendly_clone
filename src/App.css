@@ -1,19 +1,18 @@
 .App {
   margin: 50px 0;
-  
 }
 body {
-  background-color:#ddd;
+  background-color: #ddd;
 }
 h2 {
   text-align: center;
 }
-form>div{
+form > div {
   margin-bottom: 20px;
   display: flex;
   justify-content: center;
 }
-form>div:last-child{
+form > div:last-child {
   margin: 0;
 }
 
@@ -21,7 +20,7 @@ form>div:last-child{
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap:20px;
+  gap: 20px;
 }
 
 .MuiToolbar-root {
@@ -30,9 +29,9 @@ form>div:last-child{
   justify-content: space-between;
 }
 
-.MuiToolbar-root button{
+.MuiToolbar-root button {
   padding: 0;
-  color:#fff;
+  color: #fff;
 }
 
 .modal {
@@ -44,7 +43,7 @@ form>div:last-child{
   background-color: #fff;
   padding: 30px 20px;
 }
-.modal>button {
+.modal > button {
   position: absolute;
   right: 0;
   top: 0;
@@ -54,13 +53,32 @@ form>div:last-child{
   margin: 50px 0;
   width: 100%;
 }
-.MuiList-root li{
+.MuiList-root li {
   margin-bottom: 5px;
-  background-color:#fff;
+  background-color: #fff;
 }
 .user-inner .MuiList-root {
   margin: 50px 0;
   width: 95%;
-  padding-left: 24px!important;
-  padding-right: 24px!important;
+  padding-left: 24px !important;
+  padding-right: 24px !important;
+}
+
+.user-inner > .MuiAlert-root {
+  margin: 50px 0 0 0;
+}
+
+#inviteForm {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+}
+
+#inviteForm .MuiFormControl-root {
+  margin: 0;
+}
+
+#inviteForm p#email-helper-text {
+  position: absolute;
+  top: 100%;
 }

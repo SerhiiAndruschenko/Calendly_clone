@@ -1,28 +1,25 @@
-import { useState, useEffect } from 'react';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import Paper from '@mui/material/Paper';
-import { Alert, TextField, Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { UserActions } from '../../store/UserSlice';
-import { LOCAL_STORAGE_NAME } from '../../common/constants';
-import { fetchUsers } from '../../store/UserSlice';
-
+import { useState, useEffect } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import Paper from "@mui/material/Paper";
+import { Alert, TextField, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { UserActions } from "../../store/UserSlice";
+import { LOCAL_STORAGE_NAME } from "../../common/constants";
+import { fetchUsers } from "../../store/UserSlice";
 
 const validationSchema = Yup.object().shape({
-  
   email: Yup.string()
-    .email('Email is not valid')
-    .required('This field is required'),
-  password: Yup.string()
-    .required('This field is required'),
+    .email("Email is not valid")
+    .required("This field is required"),
+  password: Yup.string().required("This field is required"),
 });
 
 const SignIn = ({ setVisibility }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [alertMessage, setAlertMessage] = useState('');
+  const [alertMessage, setAlertMessage] = useState("");
   const users = useSelector((state) => state.user.users);
 
   useEffect(() => {
@@ -30,34 +27,40 @@ const SignIn = ({ setVisibility }) => {
   }, [dispatch]);
 
   const formik = useFormik({
-    initialValues:{
-      email: '',
-      password: ''
-    }, 
+    initialValues: {
+      email: "",
+      password: "",
+    },
     validationSchema: validationSchema,
     onSubmit: () => {
-
       const { email, password } = formik.values;
-      const foundUser = users.find(user => user.email === email && user.password === password);
+      const foundUser = users.find(
+        (user) => user.email === email && user.password === password
+      );
 
       if (foundUser) {
         formik.resetForm();
         dispatch(UserActions.logIn({ ...foundUser }));
-        navigate('/');
+        navigate("/");
         localStorage.removeItem(LOCAL_STORAGE_NAME.TEMP_EMAIL);
       } else {
-        setAlertMessage('User not found. Please sign up.');
+        setAlertMessage("User not found. Please sign up.");
         localStorage.setItem(LOCAL_STORAGE_NAME.TEMP_EMAIL, email);
       }
-    }
+    },
   });
 
-  
-
-  return(
+  return (
     <>
-      
-      <Paper sx={{ maxWidth: 350, marginLeft: 'auto', marginRight: 'auto', padding: '20px'}} elevation={3}>
+      <Paper
+        sx={{
+          maxWidth: 350,
+          marginLeft: "auto",
+          marginRight: "auto",
+          padding: "20px",
+        }}
+        elevation={3}
+      >
         <form onSubmit={formik.handleSubmit}>
           <h2>Sign In</h2>
 
@@ -90,17 +93,17 @@ const SignIn = ({ setVisibility }) => {
             />
           </div>
 
-         { alertMessage && (
+          {alertMessage && (
             <>
               <Alert severity="error">{alertMessage}</Alert>
             </>
           )}
 
           <div>
-            <Button 
+            <Button
               fullWidth
-              variant="contained" 
-              color="primary" 
+              variant="contained"
+              color="primary"
               type="submit"
               size="large"
             >
@@ -109,13 +112,14 @@ const SignIn = ({ setVisibility }) => {
           </div>
 
           <div>
-            <Button variant="text" onClick={setVisibility}>Sign Up</Button>
+            <Button variant="text" onClick={setVisibility}>
+              Sign Up
+            </Button>
           </div>
-
         </form>
       </Paper>
     </>
-  )
-}
+  );
+};
 
 export default SignIn;

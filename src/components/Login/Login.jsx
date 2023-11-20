@@ -1,10 +1,10 @@
 import { useState } from "react";
 import SignIn from "../SignIn/SignIn";
 import SignUp from "../SignUp/SignUp";
-import { useEffect } from 'react';
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserActions } from '../../store/UserSlice';
-import { useDispatch, useSelector } from 'react-redux';
+import { UserActions } from "../../store/UserSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ const Login = () => {
 
   useEffect(() => {
     if (token) {
-      navigate('/');
+      navigate("/");
     }
   }, [token, navigate]);
 
@@ -25,13 +25,17 @@ const Login = () => {
 
   const handleSignUpVisibility = () => {
     return setSignUpVisibility(!signUpVisibility);
-  }
+  };
 
   return (
     <>
-      { signUpVisibility ? <SignUp setVisibility={() => handleSignUpVisibility()} /> : <SignIn setVisibility={() => handleSignUpVisibility()} />}
+      {signUpVisibility ? (
+        <SignUp setVisibility={() => handleSignUpVisibility()} />
+      ) : (
+        <SignIn setVisibility={() => handleSignUpVisibility()} />
+      )}
     </>
-  )
-}
+  );
+};
 
 export default Login;
