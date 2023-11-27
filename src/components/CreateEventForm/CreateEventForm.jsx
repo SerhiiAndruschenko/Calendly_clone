@@ -54,6 +54,7 @@ const CreateEventForm = ({ onCloseModal }) => {
           id: user.id,
           name: user.name,
           status: user.id === currentUserInfo.id ? "accepted" : "pending",
+          role: user.id === currentUserInfo.id ? "owner" : "member",
         })),
       };
 

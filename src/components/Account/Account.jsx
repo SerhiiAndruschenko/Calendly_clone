@@ -22,6 +22,7 @@ import CreateEventForm from "../CreateEventForm/CreateEventForm";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CheckIcon from "@mui/icons-material/Check";
 import CancelIcon from "@mui/icons-material/Cancel";
+import EditIcon from "@mui/icons-material/Edit";
 import { fetchUsers } from "../../store/UserSlice";
 import InviteForm from "../InviteForm/InviteForm";
 import { usersList, eventsList, currentUser } from "../../store/selectors";
@@ -76,6 +77,10 @@ const Account = () => {
     navigate("/login");
   };
 
+  const handleEditEvent = (eventID) => {
+    console.log(eventID);
+  };
+
   const isFirstUser = () => {
     if (users.length === 1) {
       return true;
@@ -99,6 +104,16 @@ const Account = () => {
 
     return currentUserParticipant
       ? currentUserParticipant.status
+      : "no status find";
+  };
+
+  const getRoleOfUser = (event) => {
+    const currentUserParticipant = event.participants.find(
+      (participant) => participant.id === loggedInUser.id
+    );
+
+    return currentUserParticipant
+      ? currentUserParticipant.role
       : "no status find";
   };
 
@@ -148,71 +163,84 @@ const Account = () => {
           <List>
             {userEvents.map((event) => {
               const status = getStatusForCurrentUser(event);
+              const role = getRoleOfUser(event);
+              const isOwner = role === "owner";
               return (
                 <ListItem
                   key={event.id}
                   className={status}
                   secondaryAction={
-                    status === "pending" ? (
-                      <>
+                    <>
+                      {isOwner && (
                         <IconButton
                           edge="end"
-                          aria-label="accept"
-                          onClick={() =>
-                            handleStatusChange(event.id, "accepted")
-                          }
+                          aria-label="edit"
+                          onClick={() => handleEditEvent(event.id)}
                         >
-                          <CheckIcon />
+                          <EditIcon />
                         </IconButton>
-                        <IconButton
-                          edge="end"
-                          aria-label="cancel"
-                          onClick={() =>
-                            handleStatusChange(event.id, "cancelled")
-                          }
-                        >
-                          <CancelIcon />
-                        </IconButton>
-                      </>
-                    ) : status === "cancelled" ? (
-                      <>
-                        <IconButton
-                          edge="end"
-                          aria-label="accept"
-                          onClick={() =>
-                            handleStatusChange(event.id, "accepted")
-                          }
-                        >
-                          <CheckIcon />
-                        </IconButton>
-                        <IconButton
-                          edge="end"
-                          aria-label="delete"
-                          onClick={() => handleEventDelete(event.id)}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </>
-                    ) : (
-                      <>
-                        <IconButton
-                          edge="end"
-                          aria-label="cancel"
-                          onClick={() =>
-                            handleStatusChange(event.id, "cancelled")
-                          }
-                        >
-                          <CancelIcon />
-                        </IconButton>
-                        <IconButton
-                          edge="end"
-                          aria-label="delete"
-                          onClick={() => handleEventDelete(event.id)}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </>
-                    )
+                      )}
+                      {status === "pending" ? (
+                        <>
+                          <IconButton
+                            edge="end"
+                            aria-label="accept"
+                            onClick={() =>
+                              handleStatusChange(event.id, "accepted")
+                            }
+                          >
+                            <CheckIcon />
+                          </IconButton>
+                          <IconButton
+                            edge="end"
+                            aria-label="cancel"
+                            onClick={() =>
+                              handleStatusChange(event.id, "cancelled")
+                            }
+                          >
+                            <CancelIcon />
+                          </IconButton>
+                        </>
+                      ) : status === "cancelled" ? (
+                        <>
+                          <IconButton
+                            edge="end"
+                            aria-label="accept"
+                            onClick={() =>
+                              handleStatusChange(event.id, "accepted")
+                            }
+                          >
+                            <CheckIcon />
+                          </IconButton>
+                          <IconButton
+                            edge="end"
+                            aria-label="delete"
+                            onClick={() => handleEventDelete(event.id)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </>
+                      ) : (
+                        <>
+                          <IconButton
+                            edge="end"
+                            aria-label="cancel"
+                            onClick={() =>
+                              handleStatusChange(event.id, "cancelled")
+                            }
+                          >
+                            <CancelIcon />
+                          </IconButton>
+                          <IconButton
+                            edge="end"
+                            aria-label="delete"
+                            onClick={() => handleEventDelete(event.id)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </>
+                      )}
+                    </>
                   }
                 >
                   <ListItemText
