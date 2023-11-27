@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import {
@@ -13,9 +12,13 @@ import {
   Box,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { EventActions } from "../../store/EventSlice";
-import { usersList } from "../../store/selectors";
-import { fetchUsers } from "../../store/UserSlice";
+import { usersList, currentUser } from "../../store/selectors";
+import { addNewEvent } from "../../store/EventSlice";
+import dayjs from "dayjs";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 
 const validationSchema = Yup.object({
   eventName: Yup.string()
@@ -24,29 +27,38 @@ const validationSchema = Yup.object({
   description: Yup.string()
     .required("This field is required")
     .min(10, "Minimum 10 characters"),
-  selectedUser: Yup.string().required("This field is required"),
+  selectedUsers: Yup.array().required("This field is required"),
   dateTime: Yup.date().required("This field is required"),
 });
 
 const CreateEventForm = ({ onCloseModal }) => {
   const users = useSelector(usersList);
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    //dispatch(UserActions.getUserList());
-    dispatch(fetchUsers());
-  }, [dispatch]);
+  const currentUserInfo = useSelector(currentUser);
 
   const formik = useFormik({
     initialValues: {
       eventName: "",
       description: "",
-      selectedUser: "",
-      dateTime: new Date(),
+      selectedUsers: [currentUserInfo],
+      dateTime: dayjs(new Date()),
     },
     validationSchema,
-    onSubmit: (values) => {
-      dispatch(EventActions.addEvent(values));
+    onSubmit: async (values) => {
+      const formattedDateTime = values.dateTime.format("MM/DD/YYYY h:mm A");
+      const eventData = {
+        eventName: values.eventName,
+        description: values.description,
+        dateTime: formattedDateTime,
+        participants: values.selectedUsers.map((user) => ({
+          id: user.id,
+          name: user.name,
+          status: user.id === currentUserInfo.id ? "accepted" : "pending",
+        })),
+      };
+
+      dispatch(addNewEvent(eventData));
+
       onCloseModal();
     },
   });
@@ -89,21 +101,24 @@ const CreateEventForm = ({ onCloseModal }) => {
           </Grid>
           <Grid item xs={12}>
             <FormControl fullWidth>
-              <InputLabel id="selectedUser-label">Select User</InputLabel>
+              <InputLabel id="selectedUsers-label">Select User</InputLabel>
               <Select
-                labelId="selectedUser-label"
-                id="selectedUser"
-                name="selectedUser"
-                label="Select User"
-                value={formik.values.selectedUser}
-                onChange={formik.handleChange}
+                labelId="selectedUsers-label"
+                id="selectedUsers"
+                name="selectedUsers"
+                label="Select Users"
+                multiple
+                value={formik.values.selectedUsers}
+                onChange={(event) =>
+                  formik.setFieldValue("selectedUsers", event.target.value)
+                }
                 error={
-                  formik.touched.selectedUser &&
-                  Boolean(formik.errors.selectedUser)
+                  formik.touched.selectedUsers &&
+                  Boolean(formik.errors.selectedUsers)
                 }
               >
                 {users.map((user) => (
-                  <MenuItem key={user.id} value={user.name}>
+                  <MenuItem key={user.id} value={user}>
                     {user.name}
                   </MenuItem>
                 ))}
@@ -111,20 +126,18 @@ const CreateEventForm = ({ onCloseModal }) => {
             </FormControl>
           </Grid>
           <Grid item xs={12}>
-            <TextField
-              fullWidth
-              id="dateTime"
-              name="dateTime"
-              label="Date and Time"
-              type="datetime-local"
-              value={formik.values.dateTime}
-              onChange={formik.handleChange}
-              error={formik.touched.dateTime && Boolean(formik.errors.dateTime)}
-              helperText={formik.touched.dateTime && formik.errors.dateTime}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DemoContainer components={["DateTimePicker"]}>
+                <DateTimePicker
+                  label="Date & Time"
+                  value={formik.values.dateTime}
+                  minDateTime={dayjs(new Date())}
+                  onChange={(newValue) => {
+                    formik.setFieldValue("dateTime", newValue);
+                  }}
+                />
+              </DemoContainer>
+            </LocalizationProvider>
           </Grid>
         </Grid>
         <Box mt={2}>

@@ -20,16 +20,20 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import CloseIcon from "@mui/icons-material/Close";
 import CreateEventForm from "../CreateEventForm/CreateEventForm";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { EventActions } from "../../store/EventSlice";
+import CheckIcon from "@mui/icons-material/Check";
+import CancelIcon from "@mui/icons-material/Cancel";
 import { fetchUsers } from "../../store/UserSlice";
 import InviteForm from "../InviteForm/InviteForm";
 import { usersList, eventsList, currentUser } from "../../store/selectors";
+import { fetchEvents } from "../../store/EventSlice";
+import { removeUserFromEvent, changeEventStatus } from "../../store/EventSlice";
 
 const Account = () => {
   const dispatch = useDispatch();
   const users = useSelector(usersList);
-  const user = useSelector(currentUser);
+  const loggedInUser = useSelector(currentUser);
   const events = useSelector(eventsList);
+  const [userEvents, setUserEvents] = useState([]);
 
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
@@ -41,16 +45,30 @@ const Account = () => {
     setOpenModal(false);
   };
 
-  const handleEventDelete = (eventObject) => {
-    dispatch(EventActions.deleteEvent(eventObject));
-  };
   useEffect(() => {
-    console.log(events);
-  });
-  useEffect(() => {
-    dispatch(UserActions.getUser());
     dispatch(fetchUsers());
-  }, [dispatch]);
+  }, []);
+
+  useEffect(() => {
+    dispatch(UserActions.getUserId());
+    dispatch(fetchEvents(loggedInUser.id));
+  }, [dispatch, users, loggedInUser.id]);
+
+  const handleEventDelete = (eventID) => {
+    dispatch(
+      removeUserFromEvent({ eventId: eventID, userId: loggedInUser.id })
+    );
+  };
+
+  const handleStatusChange = (eventID, status) => {
+    dispatch(
+      changeEventStatus({
+        eventId: eventID,
+        userId: loggedInUser.id,
+        status: status,
+      })
+    );
+  };
 
   const handleLogOut = (event) => {
     event.preventDefault();
@@ -66,12 +84,30 @@ const Account = () => {
     }
   };
 
+  useEffect(() => {
+    setUserEvents(events);
+  }, [events]);
+
+  useEffect(() => {
+    setUserEvents(events);
+  }, [events]);
+
+  const getStatusForCurrentUser = (event) => {
+    const currentUserParticipant = event.participants.find(
+      (participant) => participant.id === loggedInUser.id
+    );
+
+    return currentUserParticipant
+      ? currentUserParticipant.status
+      : "no status find";
+  };
+
   return (
     <>
       <div className="user-inner">
         <AppBar>
           <Toolbar>
-            <h2>Hello, {user.name}</h2>
+            <h2>Hello, {loggedInUser.name}</h2>
             <Stack spacing={2} direction="row">
               <Button
                 variant="text"
@@ -104,43 +140,105 @@ const Account = () => {
           </>
         )}
 
-        {events.length === 0 ? (
+        {userEvents.length === 0 ? (
           <Typography variant="h6" align="center" mt={6}>
             No events available.
           </Typography>
         ) : (
           <List>
-            {events.map((event) => (
-              <ListItem
-                key={event.id}
-                secondaryAction={
-                  <IconButton
-                    edge="end"
-                    aria-label="delete"
-                    onClick={() => handleEventDelete(event)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                }
-              >
-                <ListItemText
-                  primary={event.eventName}
-                  secondary={
-                    <>
-                      <Typography variant="body1">
-                        Description: {event.description}
-                      </Typography>
-                      <Typography variant="body2">
-                        User: {event.selectedUser}
-                      </Typography>
-                      <Typography variant="body2">
-                        Date: {event.dateTime}
-                      </Typography>
-                    </>
+            {userEvents.map((event) => {
+              const status = getStatusForCurrentUser(event);
+              return (
+                <ListItem
+                  key={event.id}
+                  className={status}
+                  secondaryAction={
+                    status === "pending" ? (
+                      <>
+                        <IconButton
+                          edge="end"
+                          aria-label="accept"
+                          onClick={() =>
+                            handleStatusChange(event.id, "accepted")
+                          }
+                        >
+                          <CheckIcon />
+                        </IconButton>
+                        <IconButton
+                          edge="end"
+                          aria-label="cancel"
+                          onClick={() =>
+                            handleStatusChange(event.id, "cancelled")
+                          }
+                        >
+                          <CancelIcon />
+                        </IconButton>
+                      </>
+                    ) : status === "cancelled" ? (
+                      <>
+                        <IconButton
+                          edge="end"
+                          aria-label="accept"
+                          onClick={() =>
+                            handleStatusChange(event.id, "accepted")
+                          }
+                        >
+                          <CheckIcon />
+                        </IconButton>
+                        <IconButton
+                          edge="end"
+                          aria-label="delete"
+                          onClick={() => handleEventDelete(event.id)}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </>
+                    ) : (
+                      <>
+                        <IconButton
+                          edge="end"
+                          aria-label="cancel"
+                          onClick={() =>
+                            handleStatusChange(event.id, "cancelled")
+                          }
+                        >
+                          <CancelIcon />
+                        </IconButton>
+                        <IconButton
+                          edge="end"
+                          aria-label="delete"
+                          onClick={() => handleEventDelete(event.id)}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </>
+                    )
                   }
-                />
-              </ListItem>
-            ))}
+                >
+                  <ListItemText
+                    primary={event.eventName}
+                    secondary={
+                      <>
+                        <span>Description: {event.description}</span>
+                        <br />
+                        <span>Date: {event.dateTime}</span>
+                        <span className="users">
+                          Users:{" "}
+                          {event.participants.map((participant) => (
+                            <span
+                              key={participant.id}
+                              className={participant.status}
+                            >
+                              {participant.name}
+                            </span>
+                          ))}
+                        </span>
+                      </>
+                    }
+                  />
+                </ListItem>
+              );
+            })}
           </List>
         )}
 

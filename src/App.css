@@ -82,3 +82,40 @@ form > div:last-child {
   position: absolute;
   top: 100%;
 }
+
+span.pending {
+  padding: 5px 10px;
+  background: #ddd;
+  border-radius: 15px;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.users {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0 0 0;
+}
+
+span.accepted {
+  padding: 5px 10px;
+  background: green;
+  border-radius: 15px;
+  color: #fff;
+  font-size: 12px;
+}
+
+span.cancel,
+span.cancelled {
+  padding: 5px 10px;
+  background: red;
+  border-radius: 15px;
+  color: #fff;
+  font-size: 12px;
+}
+
+.MuiListItem-root.cancel,
+.MuiListItem-root.cancelled {
+  opacity: 0.7;
+}

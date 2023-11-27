@@ -17,7 +17,6 @@ const InviteForm = () => {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      console.log(values);
       formik.resetForm();
     },
   });
