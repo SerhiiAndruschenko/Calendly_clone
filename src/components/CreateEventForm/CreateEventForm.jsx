@@ -56,23 +56,10 @@ const CreateEventForm = ({ onCloseModalSuccess, selectedEvent }) => {
     : null;
 
   const getSelectedUsers = () => {
-    if (!individual) {
-      return selectedEvent
-        ? filteredUsers.filter((user) =>
-            filteredParticipants.some(
-              (participant) => participant.id === user.id
-            )
-          )
-        : [];
-    } else {
-      return selectedEvent
-        ? filteredUsers.filter((user) =>
-            filteredParticipants.some(
-              (participant) => participant.id === user.id
-            )
-          )[0]
-        : "";
-    }
+    const filtered = filteredUsers.filter((user) =>
+      filteredParticipants.some((participant) => participant.id === user.id)
+    );
+    return individual ? filtered[0] : filtered;
   };
 
   const formik = useFormik({
