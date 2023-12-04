@@ -9,6 +9,8 @@ import { LOCAL_STORAGE_NAME } from "../../common/constants";
 import { addUser } from "../../store/UserSlice";
 import { fetchUsers } from "../../store/UserSlice";
 import { usersList } from "../../store/selectors";
+//import { Resend } from "resend";
+//import { SignUpEmail } from "./SignUpEmail";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("This field is required"),
@@ -23,6 +25,23 @@ const validationSchema = Yup.object().shape({
       "Password must contain: at least 1 lowercase letter, at least 1 uppercase letter, at least one digit. minimum length 12 characters"
     ),
 });
+
+/*const resend = new Resend("re_9e25BSSp_8QLG5ufsQBNhcVbvYiPKSkbf");
+
+const emailSend = async function (email) {
+  try {
+    const data = await resend.emails.send({
+      from: "andruschenkoepic@gmail.com",
+      to: email,
+      subject: "Registration completed!",
+      react: <SignUpEmail />,
+    });
+
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+};*/
 
 const SignUp = ({ setVisibility }) => {
   const dispatch = useDispatch();
@@ -59,6 +78,8 @@ const SignUp = ({ setVisibility }) => {
         formik.resetForm();
         dispatch(UserActions.logIn({ ...newUser }));
         localStorage.removeItem(LOCAL_STORAGE_NAME.TEMP_EMAIL);
+
+        //emailSend(email);
       } else {
         setAlertMessage("User already exist. Please sign in.");
       }

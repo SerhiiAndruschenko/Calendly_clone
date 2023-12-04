@@ -137,7 +137,7 @@ const Account = () => {
         <AppBar>
           <Toolbar>
             <h2>Hello, {loggedInUser.name}</h2>
-            <Stack spacing={2} direction="row">
+            <Stack spacing={3} direction="row">
               <Button
                 variant="text"
                 type="submit"
@@ -147,22 +147,22 @@ const Account = () => {
               >
                 Create event
               </Button>
-              <Button
+              <IconButton
                 variant="text"
                 type="submit"
                 size="large"
                 onClick={handleOpenUserSettingsModal}
               >
                 <AccountCircleIcon />
-              </Button>
-              <Button
+              </IconButton>
+              <IconButton
                 variant="text"
                 type="submit"
                 size="large"
                 onClick={handleLogOut}
               >
                 <LogoutIcon />
-              </Button>
+              </IconButton>
             </Stack>
           </Toolbar>
         </AppBar>
