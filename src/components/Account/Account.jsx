@@ -9,25 +9,26 @@ import {
   Modal,
   Box,
   List,
-  ListItem,
-  ListItemText,
+  Snackbar,
   Typography,
   IconButton,
   Alert,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import LogoutIcon from "@mui/icons-material/Logout";
 import CloseIcon from "@mui/icons-material/Close";
-import CreateEventForm from "../CreateEventForm/CreateEventForm";
-import DeleteIcon from "@mui/icons-material/Delete";
-import CheckIcon from "@mui/icons-material/Check";
-import CancelIcon from "@mui/icons-material/Cancel";
-import EditIcon from "@mui/icons-material/Edit";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { useNavigate } from "react-router-dom";
 import { fetchUsers } from "../../store/UserSlice";
+import {
+  fetchEvents,
+  removeUserFromEvent,
+  changeEventStatus,
+} from "../../store/EventSlice";
+import EditUserForm from "./EditUserForm";
+import CreateEventForm from "../CreateEventForm/CreateEventForm";
 import InviteForm from "../InviteForm/InviteForm";
 import { usersList, eventsList, currentUser } from "../../store/selectors";
-import { fetchEvents } from "../../store/EventSlice";
-import { removeUserFromEvent, changeEventStatus } from "../../store/EventSlice";
+import EventItem from "./EventItem";
 
 const Account = () => {
   const dispatch = useDispatch();
@@ -35,15 +36,33 @@ const Account = () => {
   const loggedInUser = useSelector(currentUser);
   const events = useSelector(eventsList);
   const [userEvents, setUserEvents] = useState([]);
-
+  const [openUserSettingsModal, setOpenUserSettingsModal] = useState(false);
+  const [openSuccessAlert, setOpenSuccessAlert] = useState(false);
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+
+  const handleEditEvent = (eventID) => {
+    const eventToEdit = userEvents.find((event) => event.id === eventID);
+    setSelectedEvent(eventToEdit);
+    handleOpenModal();
+  };
 
   const handleOpenModal = () => {
     setOpenModal(true);
   };
+
   const handleCloseModal = () => {
     setOpenModal(false);
+  };
+
+  const handleCloseModalSuccess = () => {
+    setOpenModal(false);
+    setOpenSuccessAlert(true);
+  };
+
+  const handleCloseAlert = () => {
+    setOpenSuccessAlert(false);
   };
 
   useEffect(() => {
@@ -77,21 +96,9 @@ const Account = () => {
     navigate("/login");
   };
 
-  const handleEditEvent = (eventID) => {
-    console.log(eventID);
-  };
-
   const isFirstUser = () => {
-    if (users.length === 1) {
-      return true;
-    } else {
-      return false;
-    }
+    return users.length === 1;
   };
-
-  useEffect(() => {
-    setUserEvents(events);
-  }, [events]);
 
   useEffect(() => {
     setUserEvents(events);
@@ -101,7 +108,6 @@ const Account = () => {
     const currentUserParticipant = event.participants.find(
       (participant) => participant.id === loggedInUser.id
     );
-
     return currentUserParticipant
       ? currentUserParticipant.status
       : "no status find";
@@ -111,10 +117,18 @@ const Account = () => {
     const currentUserParticipant = event.participants.find(
       (participant) => participant.id === loggedInUser.id
     );
-
     return currentUserParticipant
       ? currentUserParticipant.role
       : "no status find";
+  };
+
+  const handleOpenUserSettingsModal = () => {
+    setOpenUserSettingsModal(true);
+  };
+
+  const handleCloseUserSettingsModal = () => {
+    setOpenUserSettingsModal(false);
+    setOpenSuccessAlert(true);
   };
 
   return (
@@ -137,6 +151,14 @@ const Account = () => {
                 variant="text"
                 type="submit"
                 size="large"
+                onClick={handleOpenUserSettingsModal}
+              >
+                <AccountCircleIcon />
+              </Button>
+              <Button
+                variant="text"
+                type="submit"
+                size="large"
                 onClick={handleLogOut}
               >
                 <LogoutIcon />
@@ -145,11 +167,11 @@ const Account = () => {
           </Toolbar>
         </AppBar>
 
-        {isFirstUser() === true && (
+        {isFirstUser() && (
           <>
             <Alert severity="info">
-              Congratulation you are first client, please invite you friends
-              (college's)
+              Congratulations, you are the first client. Please invite your
+              friends (colleagues).
               <InviteForm />
             </Alert>
           </>
@@ -160,114 +182,21 @@ const Account = () => {
             No events available.
           </Typography>
         ) : (
-          <List>
-            {userEvents.map((event) => {
-              const status = getStatusForCurrentUser(event);
-              const role = getRoleOfUser(event);
-              const isOwner = role === "owner";
-              return (
-                <ListItem
+          <>
+            <List>
+              {userEvents.map((event) => (
+                <EventItem
                   key={event.id}
-                  className={status}
-                  secondaryAction={
-                    <>
-                      {isOwner && (
-                        <IconButton
-                          edge="end"
-                          aria-label="edit"
-                          onClick={() => handleEditEvent(event.id)}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                      )}
-                      {status === "pending" ? (
-                        <>
-                          <IconButton
-                            edge="end"
-                            aria-label="accept"
-                            onClick={() =>
-                              handleStatusChange(event.id, "accepted")
-                            }
-                          >
-                            <CheckIcon />
-                          </IconButton>
-                          <IconButton
-                            edge="end"
-                            aria-label="cancel"
-                            onClick={() =>
-                              handleStatusChange(event.id, "cancelled")
-                            }
-                          >
-                            <CancelIcon />
-                          </IconButton>
-                        </>
-                      ) : status === "cancelled" ? (
-                        <>
-                          <IconButton
-                            edge="end"
-                            aria-label="accept"
-                            onClick={() =>
-                              handleStatusChange(event.id, "accepted")
-                            }
-                          >
-                            <CheckIcon />
-                          </IconButton>
-                          <IconButton
-                            edge="end"
-                            aria-label="delete"
-                            onClick={() => handleEventDelete(event.id)}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </>
-                      ) : (
-                        <>
-                          <IconButton
-                            edge="end"
-                            aria-label="cancel"
-                            onClick={() =>
-                              handleStatusChange(event.id, "cancelled")
-                            }
-                          >
-                            <CancelIcon />
-                          </IconButton>
-                          <IconButton
-                            edge="end"
-                            aria-label="delete"
-                            onClick={() => handleEventDelete(event.id)}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </>
-                      )}
-                    </>
-                  }
-                >
-                  <ListItemText
-                    primary={event.eventName}
-                    secondary={
-                      <>
-                        <span>Description: {event.description}</span>
-                        <br />
-                        <span>Date: {event.dateTime}</span>
-                        <span className="users">
-                          Users:{" "}
-                          {event.participants.map((participant) => (
-                            <span
-                              key={participant.id}
-                              className={participant.status}
-                            >
-                              {participant.name}
-                            </span>
-                          ))}
-                        </span>
-                      </>
-                    }
-                  />
-                </ListItem>
-              );
-            })}
-          </List>
+                  event={event}
+                  handleEditEvent={handleEditEvent}
+                  handleEventDelete={handleEventDelete}
+                  handleStatusChange={handleStatusChange}
+                  getStatusForCurrentUser={getStatusForCurrentUser}
+                  getRoleOfUser={getRoleOfUser}
+                />
+              ))}
+            </List>
+          </>
         )}
 
         <Modal
@@ -276,13 +205,54 @@ const Account = () => {
           aria-labelledby="child-modal-title"
         >
           <Box className="modal">
-            <h2 id="child-modal-title">Create new event</h2>
-            <CreateEventForm onCloseModal={handleCloseModal} />
-            <IconButton onClick={handleCloseModal}>
+            <h2 id="child-modal-title">
+              {selectedEvent ? "Edit Event" : "Create new event"}
+            </h2>
+            <CreateEventForm
+              onCloseModalSuccess={() => {
+                handleCloseModalSuccess();
+                setSelectedEvent(null);
+              }}
+              selectedEvent={selectedEvent}
+            />
+            <IconButton
+              onClick={() => {
+                handleCloseModal();
+                setSelectedEvent(null);
+              }}
+            >
               <CloseIcon />
             </IconButton>
           </Box>
         </Modal>
+
+        <Modal
+          open={openUserSettingsModal}
+          onClose={handleCloseUserSettingsModal}
+          aria-labelledby="user-settings-modal-title"
+        >
+          <Box className="modal">
+            <h2 id="user-settings-modal-title">Edit User Settings</h2>
+            <EditUserForm onCloseModal={handleCloseUserSettingsModal} />
+            <IconButton onClick={handleCloseUserSettingsModal}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </Modal>
+
+        <Snackbar
+          open={openSuccessAlert}
+          autoHideDuration={6000}
+          onClose={handleCloseAlert}
+        >
+          <Alert
+            onClose={handleCloseAlert}
+            severity="success"
+            sx={{ width: "100%" }}
+          >
+            Success!
+          </Alert>
+        </Snackbar>
       </div>
     </>
   );

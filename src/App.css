@@ -119,3 +119,11 @@ span.cancelled {
 .MuiListItem-root.cancelled {
   opacity: 0.7;
 }
+.hours-row {
+  display: flex;
+  gap: 30px;
+}
+
+.modal .css-4jnixx-MuiStack-root > .MuiTextField-root {
+  min-width: unset;
+}

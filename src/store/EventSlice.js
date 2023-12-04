@@ -33,6 +33,14 @@ export const removeUserFromEvent = createAsyncThunk(
   }
 );
 
+export const editEvent = createAsyncThunk(
+  "events/editEvent",
+  ({ eventId, updatedEvent }) =>
+    axios
+      .put(`${apiUrlEvents}/${eventId}`, updatedEvent)
+      .then(() => ({ eventId, updatedEvent }))
+);
+
 export const changeEventStatus = createAsyncThunk(
   "events/changeEventStatus",
   ({ eventId, userId, status }) => {
@@ -55,6 +63,13 @@ export const changeEventStatus = createAsyncThunk(
     });
   }
 );
+
+const updateEventInState = (state, eventId, updatedEvent) => {
+  const updatedEvents = state.events.map((event) =>
+    event.id === eventId ? { ...event, ...updatedEvent } : event
+  );
+  return updatedEvents;
+};
 
 export const initialState = {
   events: [],
@@ -97,6 +112,11 @@ const EventSlice = createSlice({
         state.events = state.events.filter(
           (event) => event.id !== eventInfo.eventId
         );
+      })
+      .addCase(editEvent.fulfilled, (state, action) => {
+        const { eventId, updatedEvent } = action.payload;
+        const updatedEvents = updateEventInState(state, eventId, updatedEvent);
+        state.events = updatedEvents;
       });
   },
 });

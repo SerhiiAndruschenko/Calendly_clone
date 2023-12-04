@@ -12,6 +12,17 @@ export const addUser = createAsyncThunk("users/addUser", (newUser) =>
   axios.post(apiUrlUsers, newUser).then((response) => response.data)
 );
 
+export const updateUser = createAsyncThunk(
+  "users/updateUser",
+  async (updatedUser) => {
+    const response = await axios.put(
+      `${apiUrlUsers}/${updatedUser.id}`,
+      updatedUser
+    );
+    return response.data;
+  }
+);
+
 export const initialState = {
   users: [],
   user: {},
@@ -40,9 +51,7 @@ const UserSlice = createSlice({
       if (storedToken) {
         const decodedToken = atob(storedToken);
         const userInfo = JSON.parse(decodedToken);
-        const foundUser = state.users.find(
-          (user) => user.email === userInfo.email
-        );
+        const foundUser = state.users.find((user) => user.id === userInfo.id);
 
         state.user = foundUser || {};
       }
@@ -55,6 +64,16 @@ const UserSlice = createSlice({
       })
       .addCase(addUser.fulfilled, (state, action) => {
         state.users = [action.payload, ...state.users];
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        const updatedUser = action.payload;
+
+        const index = state.users.findIndex(
+          (user) => user.id === updatedUser.id
+        );
+        if (index !== -1) {
+          state.users[index] = updatedUser;
+        }
       });
   },
 });
