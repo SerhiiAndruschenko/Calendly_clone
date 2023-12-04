@@ -38,7 +38,7 @@ const SignIn = ({ setVisibility }) => {
       const foundUser = users.find(
         (user) => user.email === email && user.password === password
       );
-
+      console.log(foundUser);
       if (foundUser) {
         formik.resetForm();
         dispatch(UserActions.logIn({ ...foundUser }));

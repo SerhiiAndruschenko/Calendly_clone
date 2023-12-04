@@ -23,6 +23,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import { useState, useEffect } from "react";
 import { editEvent } from "../../store/EventSlice";
+import ApiCalendar from "react-calendar-with-meet";
 
 const validationSchema = Yup.object({
   eventName: Yup.string()
@@ -35,6 +36,16 @@ const validationSchema = Yup.object({
   date: Yup.date().required("Date is required"),
   time: Yup.date().required("Time is required"),
 });
+
+function makeid() {
+  var text = "";
+  var possible = "0123456789abcdefghijklmnopqrstuv";
+
+  for (var i = 0; i < 5; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
+}
 
 const CreateEventForm = ({ onCloseModalSuccess, selectedEvent }) => {
   const users = useSelector(usersList);
@@ -111,6 +122,7 @@ const CreateEventForm = ({ onCloseModalSuccess, selectedEvent }) => {
         individualCall: values.individualCall,
         participants,
       };
+
       selectedEvent
         ? dispatch(
             editEvent({ eventId: selectedEvent.id, updatedEvent: eventData })

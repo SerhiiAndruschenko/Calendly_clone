@@ -43,15 +43,17 @@ const SignUp = ({ setVisibility }) => {
     validationSchema: validationSchema,
     onSubmit: () => {
       const { name, email, password } = formik.values;
-
+      const maxId = Math.max(...users.map((user) => parseInt(user.id))) || 0;
+      const id = (maxId + 1).toString();
       const newUser = {
         name,
         email,
         password,
+        id,
       };
 
       const foundUser = users.find((user) => user.email === email);
-
+      console.log(newUser);
       if (!foundUser) {
         dispatch(addUser(newUser));
         formik.resetForm();
