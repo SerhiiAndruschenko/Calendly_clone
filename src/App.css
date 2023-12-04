@@ -58,10 +58,8 @@ form > div:last-child {
   background-color: #fff;
 }
 .user-inner .MuiList-root {
-  margin: 50px 0;
+  margin: 50px 0 0 0;
   width: 95%;
-  padding-left: 24px !important;
-  padding-right: 24px !important;
 }
 
 .user-inner > .MuiAlert-root {
@@ -117,7 +115,7 @@ span.cancelled {
 
 .MuiListItem-root.cancel,
 .MuiListItem-root.cancelled {
-  opacity: 0.7;
+  opacity: 0.5;
 }
 .hours-row {
   display: flex;
@@ -126,6 +124,12 @@ span.cancelled {
 
 .modal .css-4jnixx-MuiStack-root > .MuiTextField-root {
   min-width: unset;
+}
+
+.user-inner .MuiList-root.cancelledEvents {
+  margin-top: 0;
+  padding-top: 30px;
+  border-top: 1px solid #1976d2;
 }
 
 @media screen and (max-width: 767px) {

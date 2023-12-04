@@ -41,6 +41,7 @@ const Account = () => {
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [cancelledEvents, setCancelledEvents] = useState([]);
 
   const handleEditEvent = (eventID) => {
     const eventToEdit = userEvents.find((event) => event.id === eventID);
@@ -101,8 +102,29 @@ const Account = () => {
   };
 
   useEffect(() => {
-    setUserEvents(events);
-  }, [events]);
+    const filteredEvents = events.filter((event) => {
+      const currentUserParticipant = event.participants.find(
+        (participant) => participant.id === loggedInUser.id
+      );
+      return currentUserParticipant
+        ? currentUserParticipant.status !== "cancelled"
+        : true;
+    });
+    setUserEvents(filteredEvents);
+  }, [events, loggedInUser]);
+
+  useEffect(() => {
+    const filteredEvents = events.filter((event) => {
+      const currentUserParticipant = event.participants.find(
+        (participant) => participant.id === loggedInUser.id
+      );
+      return currentUserParticipant
+        ? currentUserParticipant.status === "cancelled"
+        : false;
+    });
+
+    setCancelledEvents(filteredEvents);
+  }, [events, loggedInUser.id]);
 
   const getStatusForCurrentUser = (event) => {
     const currentUserParticipant = event.participants.find(
@@ -185,6 +207,26 @@ const Account = () => {
           <>
             <List>
               {userEvents.map((event) => (
+                <EventItem
+                  key={event.id}
+                  event={event}
+                  handleEditEvent={handleEditEvent}
+                  handleEventDelete={handleEventDelete}
+                  handleStatusChange={handleStatusChange}
+                  getStatusForCurrentUser={getStatusForCurrentUser}
+                  getRoleOfUser={getRoleOfUser}
+                />
+              ))}
+            </List>
+          </>
+        )}
+
+        {cancelledEvents.length === 0 ? (
+          <></>
+        ) : (
+          <>
+            <List className="cancelledEvents">
+              {cancelledEvents.map((event) => (
                 <EventItem
                   key={event.id}
                   event={event}
