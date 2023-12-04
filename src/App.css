@@ -127,3 +127,33 @@ span.cancelled {
 .modal .css-4jnixx-MuiStack-root > .MuiTextField-root {
   min-width: unset;
 }
+
+@media screen and (max-width: 767px) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+  .modal {
+    max-width: 85%;
+    padding: 20px 10px;
+  }
+  header h2 {
+    font-size: 18px;
+  }
+  header .MuiToolbar-root button {
+    font-size: 12px;
+  }
+  .users {
+    flex-wrap: wrap;
+  }
+  .users > span:first-child {
+    width: 100%;
+  }
+  .MuiList-root li .MuiListItemSecondaryAction-root {
+    top: 5px;
+    transform: translate(0);
+  }
+  .MuiPaper-root {
+    max-width: 80% !important;
+  }
+}

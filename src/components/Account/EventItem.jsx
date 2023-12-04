@@ -98,7 +98,7 @@ const EventItem = ({
                 <br />
                 <span>Time: {event.time}</span>
                 <span className="users">
-                  Users:{" "}
+                  <span>Users:</span>
                   {event.participants.map((participant) => (
                     <span key={participant.id} className={participant.status}>
                       {participant.name}

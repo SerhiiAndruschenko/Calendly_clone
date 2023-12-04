@@ -137,7 +137,7 @@ const Account = () => {
         <AppBar>
           <Toolbar>
             <h2>Hello, {loggedInUser.name}</h2>
-            <Stack spacing={3} direction="row">
+            <Stack spacing={2} direction="row">
               <Button
                 variant="text"
                 type="submit"
