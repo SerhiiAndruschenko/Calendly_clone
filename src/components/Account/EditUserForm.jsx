@@ -48,6 +48,7 @@ const EditUserForm = ({ onCloseModal }) => {
     validationSchema: validationSchema,
     onSubmit: (values) => {
       const updatedUser = { ...loggedInUser, ...values };
+      console.log(values);
       console.log(updatedUser);
       dispatch(updateUser(updatedUser));
       onCloseModal();
@@ -93,7 +94,7 @@ const EditUserForm = ({ onCloseModal }) => {
               name="workingHoursStart"
               label="Working Hours Start"
               ampm={false}
-              value={dayjs(formik.values.workingHoursStart)}
+              value={dayjs(formik.values.workingHoursStart, "HH:mm")}
               onChange={(newValue) =>
                 formik.setFieldValue(
                   "workingHoursStart",
@@ -117,7 +118,7 @@ const EditUserForm = ({ onCloseModal }) => {
               name="workingHoursEnd"
               label="Working Hours End"
               ampm={false}
-              value={dayjs(formik.values.workingHoursEnd)}
+              value={dayjs(formik.values.workingHoursEnd, "HH:mm")}
               onChange={(newValue) =>
                 formik.setFieldValue(
                   "workingHoursEnd",

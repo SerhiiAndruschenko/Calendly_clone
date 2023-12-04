@@ -148,9 +148,12 @@ const Account = () => {
     setOpenUserSettingsModal(true);
   };
 
-  const handleCloseUserSettingsModal = () => {
+  const handleCloseUserSettingsModalSuccess = () => {
     setOpenUserSettingsModal(false);
     setOpenSuccessAlert(true);
+  };
+  const handleCloseUserSettingsModal = () => {
+    setOpenUserSettingsModal(false);
   };
 
   return (
@@ -275,7 +278,7 @@ const Account = () => {
         >
           <Box className="modal">
             <h2 id="user-settings-modal-title">Edit User Settings</h2>
-            <EditUserForm onCloseModal={handleCloseUserSettingsModal} />
+            <EditUserForm onCloseModal={handleCloseUserSettingsModalSuccess} />
             <IconButton onClick={handleCloseUserSettingsModal}>
               <CloseIcon />
             </IconButton>
