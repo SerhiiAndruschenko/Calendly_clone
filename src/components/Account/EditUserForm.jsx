@@ -55,6 +55,11 @@ const EditUserForm = ({ onCloseModal }) => {
     },
   });
 
+  useEffect(() => {
+    formik.setFieldValue("workingHoursStart", loggedInUser.workingHoursStart);
+    formik.setFieldValue("workingHoursEnd", loggedInUser.workingHoursEnd);
+  }, [loggedInUser]);
+
   return (
     <form onSubmit={formik.handleSubmit}>
       <div>
