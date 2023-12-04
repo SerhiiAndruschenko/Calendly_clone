@@ -132,6 +132,10 @@ span.cancelled {
   border-top: 1px solid #1976d2;
 }
 
+.MuiPickersLayout-root .MuiList-root {
+  min-width: 90px;
+}
+
 @media screen and (max-width: 767px) {
   html,
   body {
