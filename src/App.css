@@ -59,7 +59,7 @@ form > div:last-child {
 }
 .user-inner .MuiList-root {
   margin: 50px 0 0 0;
-  width: 95%;
+  width: calc(100% - 48px);
 }
 
 .user-inner > .MuiAlert-root {
@@ -157,7 +157,11 @@ span.cancelled {
     top: 5px;
     transform: translate(0);
   }
-  .MuiPaper-root {
+  .MuiPaper-root:not(.MuiAppBar-root) {
     max-width: 80% !important;
+  }
+  .user-inner .MuiList-root {
+    margin: 30px 0 0 0;
+    width: calc(100% - 32px);
   }
 }
