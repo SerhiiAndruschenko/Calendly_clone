@@ -73,7 +73,7 @@ const Account = () => {
   useEffect(() => {
     dispatch(UserActions.getUserId());
     dispatch(fetchEvents(loggedInUser.id));
-  }, [dispatch, users, loggedInUser.id]);
+  }, [loggedInUser.id]);
 
   const handleEventDelete = (eventID) => {
     dispatch(

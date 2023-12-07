@@ -14,7 +14,7 @@ import {
   Box,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { usersList, currentUser } from "../../store/selectors";
+import { usersList, currentUser, eventsList } from "../../store/selectors";
 import { addNewEvent } from "../../store/EventSlice";
 import dayjs from "dayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
@@ -43,6 +43,8 @@ const CreateEventForm = ({ onCloseModalSuccess, selectedEvent }) => {
   const [individual, setIndividual] = useState(false);
   const [minTime, setMinTime] = useState(null);
   const [maxTime, setMaxTime] = useState(null);
+  const events = useSelector(eventsList);
+  const [userEvents, setUserEvents] = useState([]);
 
   const handleMultiply = () => {
     setIndividual(!individual);
@@ -138,12 +140,51 @@ const CreateEventForm = ({ onCloseModalSuccess, selectedEvent }) => {
       ? event.target.value
       : [event.target.value];
     formik.setFieldValue("selectedUsers", selectedUsers);
+
+    if (individual && selectedUsers.length > 0) {
+      const selectedUserEvents = events.filter((event) =>
+        event.participants.some(
+          (participant) => participant.id === selectedUsers[0].id
+        )
+      );
+
+      setUserEvents(selectedUserEvents);
+    } else {
+      setUserEvents([]);
+    }
+
     individual && selectedUsers.length > 0
       ? setMinTime(selectedUsers[0]?.workingHoursStart || null)
       : setMinTime(null);
     individual && selectedUsers.length > 0
       ? setMaxTime(selectedUsers[0]?.workingHoursEnd || null)
       : setMaxTime(null);
+  };
+
+  const generateDisabledTimes = () => {
+    const disabledTimes = [];
+
+    userEvents.forEach((event) => {
+      const formikDate = formik.values.date.format("MM/DD/YYYY");
+      if (formikDate === event.date) {
+        const eventTime = dayjs(event.time, "HH:mm");
+
+        const disabledTimeStart = eventTime;
+        const disabledTimeEnd = eventTime.add(1, "hour");
+
+        disabledTimes.push({
+          start: disabledTimeStart,
+          end: disabledTimeEnd,
+        });
+      }
+    });
+    return disabledTimes;
+  };
+
+  const shouldDisableTime = (value, view) => {
+    return generateDisabledTimes().some((disabledTime) =>
+      value.isBetween(disabledTime.start, disabledTime.end, null, "[]")
+    );
   };
 
   return (
@@ -243,9 +284,12 @@ const CreateEventForm = ({ onCloseModalSuccess, selectedEvent }) => {
                   name="time"
                   label="Time"
                   ampm={false}
+                  minutesStep={60}
+                  skipDisabled
                   minTime={dayjs(minTime, "HH:mm")}
                   maxTime={dayjs(maxTime, "HH:mm")}
                   value={dayjs(formik.values.time, "HH:mm")}
+                  shouldDisableTime={shouldDisableTime}
                   onChange={(newValue) =>
                     formik.setFieldValue("time", newValue)
                   }

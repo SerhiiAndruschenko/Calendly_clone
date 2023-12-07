@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, isAnyOf } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const apiUrlEvents = "https://655b4c17ab37729791a8de3b.mockapi.io/events";
@@ -73,6 +73,7 @@ const updateEventInState = (state, eventId, updatedEvent) => {
 
 export const initialState = {
   events: [],
+  isLoading: false,
 };
 
 const EventSlice = createSlice({
@@ -85,8 +86,12 @@ const EventSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(fetchEvents.pending, (state) => {
+        state.isLoading = true;
+      })
       .addCase(fetchEvents.fulfilled, (state, action) => {
         state.events = action.payload;
+        state.isLoading = false;
       })
       .addCase(addNewEvent.fulfilled, (state, action) => {
         state.events = [action.payload, ...state.events];
