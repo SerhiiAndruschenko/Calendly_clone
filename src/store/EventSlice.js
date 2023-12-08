@@ -1,7 +1,7 @@
-import { createSlice, createAsyncThunk, isAnyOf } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const apiUrlEvents = "https://655b4c17ab37729791a8de3b.mockapi.io/events";
+const apiUrlEvents = "http://localhost:3001/events";
 
 export const fetchEvents = createAsyncThunk("events/fetchEvents", (userId) => {
   return axios.get(apiUrlEvents).then((response) => {

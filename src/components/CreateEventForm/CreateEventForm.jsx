@@ -77,6 +77,8 @@ const CreateEventForm = ({ onCloseModalSuccess, selectedEvent }) => {
     },
     validationSchema,
     onSubmit: async (values) => {
+      const maxId = Math.max(...events.map((event) => parseInt(event.id))) || 0;
+      const id = (maxId + 1).toString();
       const formattedDate = values.date.format("MM/DD/YYYY");
       const formattedTime = values.time.format("HH:mm");
       const selectedUsers = Array.isArray(values.selectedUsers)
@@ -106,6 +108,7 @@ const CreateEventForm = ({ onCloseModalSuccess, selectedEvent }) => {
       }
 
       const eventData = {
+        id: id,
         eventName: values.eventName,
         description: values.description,
         date: formattedDate,
